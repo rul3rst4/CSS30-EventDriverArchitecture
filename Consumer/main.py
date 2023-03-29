@@ -32,6 +32,7 @@ def signal_handler(signum, frame):
     if res == 'y':
         exit(1)
 
+# Usage example: python .\Consumer\main.py -c .\kafka\config.ini -t .\Topics.json
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-c', '--config', type=FileType('r'), required=True)
