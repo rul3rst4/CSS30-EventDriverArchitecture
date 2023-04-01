@@ -2,11 +2,11 @@
     "Coins": [
         {
             "Name": "Bitcoin",
-            "Acronym": "BTC"
+            "Acronym": "BITCOIN"
         },
         {
             "Name": "Dogecoin",
-            "Acronym": "DOGE"
+            "Acronym": "DOGECOIN"
         }
     ]
 }
