@@ -6,6 +6,8 @@ import threading
 import time
 import signal
 from time import sleep
+import asyncio
+import websockets
 
 def delivery_callback(err, msg):
     if err:
@@ -36,7 +38,6 @@ def dogecoin(config):
     while True:
         response = requests.get('https://www.mercadobitcoin.net/api/DOGE/ticker/')
         data = response.json()
-        print(data)
         producer.produce('DOGECOIN', bytes(data["ticker"]["buy"], encoding= 'utf-8'), callback=delivery_callback)
         time.sleep(0.5)
 
@@ -52,8 +53,8 @@ print(config)
 t = threading.Thread(target=bitcoin, args=[config], daemon=True)
 t.start()
 
-t2 = threading.Thread(target=dogecoin, args=[config], daemon=True)
-t2.start()
+# t2 = threading.Thread(target=dogecoin, args=[config], daemon=True)
+# t2.start()
 
 signal.signal(signal.SIGINT, signal_handler)
 busy_wait()

@@ -13,6 +13,7 @@ from matplotlib.animation import FuncAnimation
 import time
 import datetime
 import matplotlib.dates as mdates
+import dearpygui.dearpygui as dpg
 
 lock = threading.Lock()
 
@@ -30,7 +31,11 @@ ax.set_xlabel('Time')
 ax.set_ylabel('Value')
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
 
+dpg.create_context()
+dpg.create_viewport()
+dpg.setup_dearpygui()
 
+counter = 0
 def run_consumer(config, topic):
     topic_name = topic['Name']
     topic_acronym = topic['Acronym']
@@ -56,8 +61,14 @@ def run_consumer(config, topic):
                 if topic['Acronym'] == "BITCOIN":
                     lock.acquire()
                     current_time = datetime.datetime.now()
-                    x_data.append(current_time)
+                    global counter
+                    x_data.append(counter)
+                    counter+=1
                     y_data.append(value)
+                    dpg.set_value("series_tag", list(x_data), list(y_data))
+                    dpg.fit_axis_data("y_axis")
+                    dpg.fit_axis_data("x_axis")
+
                     lock.release()
     except KeyboardInterrupt:
         pass
@@ -80,11 +91,31 @@ def update(i):
     ax.set_xlim(xmin, now)
     lock.release()
 
-ani = FuncAnimation(fig, update, interval=1000, cache_frame_data=False)
+# ani = FuncAnimation(fig, update, interval=1000, cache_frame_data=False)
 
 def busy_wait():
-    plt.show()
-    while True:
+    dpg.show_viewport()
+    # dpg.start_dearpygui()
+    # plt.show()'
+    global x_data
+    global y_data
+    with dpg.window(label="Tutorial"):
+        with dpg.plot(label="Line Series", height=-1, width=-1):
+            # optionally create legend
+            dpg.add_plot_legend()
+
+            # REQUIRED: create x and y axes
+            dpg.add_plot_axis(dpg.mvXAxis, label="x", tag="x_axis")
+            dpg.add_plot_axis(dpg.mvYAxis, label="y", tag="y_axis")
+
+            # series belong to a y axis
+            dpg.add_line_series(x=list(x_data), y=list(y_data), label="0.5 + 0.5 * sin(x)", parent="y_axis", tag="series_tag")
+
+    while dpg.is_dearpygui_running():
+        lock.acquire()
+        dpg.render_dearpygui_frame()
+        lock.release()
+
     #     lock.acquire()
     #     # y_data.append(np.random.random())
     #     line.set_data(x_data, y_data)
@@ -95,7 +126,8 @@ def busy_wait():
     #     fig.canvas.draw()
     #     fig.canvas.flush_events()
     #     lock.release()
-        sleep(1)
+    dpg.destroy_context()
+
 
 def signal_handler(signum, frame):
     res = input("Ctrl-c was pressed. Do you really want to exit? y/n ")
