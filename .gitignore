@@ -3,3 +3,4 @@ Lib
 pyvenv.cfg
 .vs
 x64
+build
