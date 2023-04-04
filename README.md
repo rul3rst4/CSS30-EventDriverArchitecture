@@ -8,6 +8,8 @@ O produtor utiliza um websocket fornnecido pelo `https://coincap.io` que envia u
 )
 A cada evento eviando do websocket do coincap.io a função `consumer()` que verifica quantas moedas tiveram seu valor alterado e envia um evento para o kafka para cada uma delas.
 
+Cada moeda definida no arquivo `Criptocoins.json` representa um tópico que o consumidor podera assinar interesse.
+
 Como executar:
 ```bash
 $ python criptocoin_producer.py -t Criptocoins.json -c kafka/config.ini
@@ -31,3 +33,8 @@ $ ./css30
 
 ## Kafka
 O kafka pode ser executado da melhor forma para o usuário. Pode ser rodando local ou por docker. O importante é apontar nos arquivos `kafka/config.ini` e no arquivo `Criptocoin_Consumer_UI/Criptocoin_Consumer_UI.cpp` para o host e porta em que o seu kafka está rodando.
+
+
+## Diagrama simples do funcionamento
+
+![](./diagrama_aplicacao.png)
