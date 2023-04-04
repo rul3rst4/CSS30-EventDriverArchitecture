@@ -1,3 +1,4 @@
 configparser==5.3.0
 confluent-kafka==2.0.2
 kafka-python
+websockets
